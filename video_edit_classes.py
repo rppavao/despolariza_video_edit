@@ -147,15 +147,15 @@ class edit_tools:
         audio_duration *= self.convert_time
         
         self.higher_sound,final_audio = self.get_highest_sound_map(audio_file1,audio_file2,audio_duration,\
-                              self.time_resolution,self.volume_reduction_factor)
+                              self.resolution,self.volume_reduction_factor)
         return final_audio
 
     def concat_video_by_sound(self):
         first = True
         previous_time = 0
         
-        final_audio = self.get_video_sound_map()
-        
+        final_audio = self.get_video_sound_map()    
+ 
         for i in self.higher_sound:
             
             current_time = i[0]
@@ -167,53 +167,47 @@ class edit_tools:
             # else:
             #     clip_name = self.video3.path + self.video3.video_name
             
-            subclip = ffmpeg_extract_subclip(clip_name, previous_time , \
-                                             current_time, targetname="subclip.mp4")
+            subclip = ffmpeg_extract_subclip(clip_name, previous_time / self.convert_time , \
+                                             current_time / self.convert_time , targetname="subclip.mp4")
             
+            subclip_obj = video("subclip.mp4")
+                
             if first == True:
-                final_video = subclip
+                final_video = subclip_obj.video_file
                 first = False
             else:
-                final_video = me.concatenate_videoclips([final_video, subclip])
+                final_video = me.concatenate_videoclips([final_video, subclip_obj.video_file])
             
             previous_time = current_time
-            
-        final_video = video( video_file = final_video)
-        final_video.change_audio( final_audio )
-        final_video.save_video("final_video.mp4")
+        print("save final video")
+        final_video_obj = video( video_file = final_video)
+        final_video_obj.change_audio( final_audio )
+        final_video_obj.save_video("final_video.mp4")
+        
+        
         
 #This part is just for testing
 
 
-name = "pexels-ron-lach-7653591.mp4"
+name = "Video_sound3.mp4"
 
 path = "D:/GoogleDrive/Despolariza/"    
 
 
 video_test1 = video(name,path)
 
-video_test1.upload_audio("sound1.wav")
+
+video_test1.upload_audio("sound3.wav")
+
+#concat_video_by_sound
+
+name = "Video_sound3.mp4"
 
 video_test2 = video(name,path)
 
-video_test2.upload_audio("sound2.wav")
-
+video_test2.upload_audio("sound4.wav")
 
 obj_tools = edit_tools(video_test1,video_test2,path)
 
-audio_file1 = video_test1.audio_file
-audio_file2 = video_test2.audio_file
-    
-audio_duration = ( lambda x: max(x) )([audio_file1.duration_seconds, \
-                                       audio_file2.duration_seconds])        
-audio_duration *= 1000
+obj_tools.concat_video_by_sound()
 
-print('Audio Duration',audio_duration)
-
-print("Volumes",audio_file1.dBFS,audio_file2.dBFS)
-
-higher_sound,final_audio = obj_tools.get_highest_sound_map(audio_file1,audio_file2,audio_duration)
-
-print(higher_sound)
-
-final_audio.export("final_audio.wav",format="wav")
