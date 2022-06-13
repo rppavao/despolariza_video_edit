@@ -41,11 +41,18 @@ class video:
         if new_name != '':
             self.name =  new_name
         
+        self.video_file.write_videofile(self.path + self.name, fps=60, codec="mpeg4")
+        self.save_audio(new_name)
+        
+        
+    def save_audio(self,new_name=''):
+        if new_name != '':
+           self.name =  new_name
+    
         audio_name = self.path + self.name[:len(self.name)-4] + '.wav'
         
-        self.video_file.write_videofile(self.path + self.name, fps=60, codec="mpeg4")
-        self.export(audio_name, format="wav")
-        
+        self.audio_file.export(audio_name, format="wav")
+    
     def upload_audio(self,audio_file_name):
         input_audio = pd.AudioSegment.from_wav(self.path + audio_file_name)
         self.change_audio(input_audio)         
@@ -84,14 +91,53 @@ class edit_tools:
 #        self.video3 = video3
         self.cutoff = parameters[0]
         self.convert_time = 1000 #seconds -> miliseconds
-        self.resolution = parameters[1] * self.convert_time 
+        self.resolution = parameters[1] * self.convert_time
         self.volume_reduction_factor = parameters[2]
     
-    def get_highest_sound_map(self):        
+    def get_highest_sound_map(self,audio_file1,audio_file2,audio_duration,\
+                              time_resolution=1000,volume_reduction_factor=0):        
         time = 0
+
+        higher_sound = []
         
-        self.video1.convert_audio()
-        self.video2.convert_audio()   
+        first_iteration = True
+        
+        if time_resolution == 0:
+            time_resolution = 1000
+        
+        while time <= audio_duration:
+            
+            audio_piece1 = audio_file1[time:time + time_resolution]
+            audio_piece2 = audio_file2[time:time + time_resolution] 
+        
+            # if audio_piece1 < self.cutoff and audio_piece1 < self.cutoff:
+            #     video_id = 3
+            #     audio_piece1 -= self.volume_reduction_factor
+            #     audio_piece2 -= self.volume_reduction_factor
+            
+            if audio_piece1.dBFS > audio_piece2.dBFS: #This is ok, it goes from -inf to 0
+                higher_sound.append([time,1])
+                if volume_reduction_factor == 0:
+                    audio_piece2 = 0
+                else:
+                    audio_piece2 -= volume_reduction_factor
+            else:
+                higher_sound.append([time,2])
+                if volume_reduction_factor == 0:
+                    audio_piece1 = 0
+                else:
+                    audio_piece1 -= volume_reduction_factor
+                
+            time += time_resolution
+            
+            if first_iteration == True:
+                final_audio = audio_piece1 + audio_piece2
+                first_iteration = False
+            else:
+                final_audio = final_audio + audio_piece1 + audio_piece2
+        return higher_sound,final_audio
+    
+    def get_video_sound_map(self):
             
         audio_file1 = self.video1.audio_file
         audio_file2 = self.video2.audio_file
@@ -100,37 +146,15 @@ class edit_tools:
                                                audio_file2.duration_seconds])        
         audio_duration *= self.convert_time
         
-        first_iteration = True
-        
-        while time <= audio_duration:
-            
-            audio_piece1 = audio_file1[time:time + self.time_resolution]
-            audio_piece2 = audio_file2[time:time + self.time_resolution] 
-        
-            # if audio_piece1 < self.cutoff and audio_piece1 < self.cutoff:
-            #     video_id = 3
-            #     audio_piece1 -= self.volume_reduction_factor
-            #     audio_piece2 -= self.volume_reduction_factor
-            if audio_piece1 > audio_piece2:
-                self.higher_sound.append([time,1])
-                audio_piece2 -= self.volume_reduction_factor
-            else:
-                self.higher_sound.append([time,2])
-                audio_piece1 -= self.volume_reduction_factor
-                
-            time += self.time_resolution
-            
-            if first_iteration == True:
-                final_audio = audio_piece1 + audio_piece2
-            else:
-                final_audio = final_audio + audio_piece1 + audio_piece2
+        self.higher_sound,final_audio = self.get_highest_sound_map(audio_file1,audio_file2,audio_duration,\
+                              self.time_resolution,self.volume_reduction_factor)
         return final_audio
 
     def concat_video_by_sound(self):
         first = True
         previous_time = 0
         
-        final_audio = self.get_highest_sound_map()
+        final_audio = self.get_video_sound_map()
         
         for i in self.higher_sound:
             
@@ -166,8 +190,30 @@ name = "pexels-ron-lach-7653591.mp4"
 path = "D:/GoogleDrive/Despolariza/"    
 
 
-video_test = video(name,path)
+video_test1 = video(name,path)
 
-video_test.upload_audio("sound_test_1.wav")
+video_test1.upload_audio("sound1.wav")
 
-video_test.save_video("new_video.mp4")
+video_test2 = video(name,path)
+
+video_test2.upload_audio("sound2.wav")
+
+
+obj_tools = edit_tools(video_test1,video_test2,path)
+
+audio_file1 = video_test1.audio_file
+audio_file2 = video_test2.audio_file
+    
+audio_duration = ( lambda x: max(x) )([audio_file1.duration_seconds, \
+                                       audio_file2.duration_seconds])        
+audio_duration *= 1000
+
+print('Audio Duration',audio_duration)
+
+print("Volumes",audio_file1.dBFS,audio_file2.dBFS)
+
+higher_sound,final_audio = obj_tools.get_highest_sound_map(audio_file1,audio_file2,audio_duration)
+
+print(higher_sound)
+
+final_audio.export("final_audio.wav",format="wav")
