@@ -37,16 +37,15 @@ class video:
         
         return result_video
     
-    def save_video(self,new_name = ''):
+    def save_video(self,new_name = '',fps=60):
         if new_name != '':
             self.name =  new_name
         
-        self.video_file.write_videofile(self.path + self.name, fps=120, codec="mpeg4")
+        self.video_file.write_videofile(self.path + self.name, fps=fps, codec="mpeg4")
         self.save_audio(new_name)
         
         
     def save_audio(self,new_name=''):
-        return
         if new_name != '':
            self.name =  new_name
     
@@ -167,42 +166,57 @@ class edit_tools:
         
         concatenate_clips = []
         
-        temp_path = "D:/GoogleDrive/Despolariza/despolariza_video_edit/temp/"    
+        temp_path = "D:/GoogleDrive/Despolariza/despolariza_video_edit/temp/"
  
         for i in self.higher_sound:
             
             current_time = i[0]
             
-            if i[1] == 1:
-                clip_name = self.video1.path + self.video1.video_name
-            elif i[1] == 2:
-                clip_name = self.video2.path + self.video2.video_name
+            # if i[1] == 1:
+            #     clip_name = self.video1.path + self.video1.video_name
+            # elif i[1] == 2:
+            #     clip_name = self.video2.path + self.video2.video_name
             # else:
             #     clip_name = self.video3.path + self.video3.video_name
             if previous_time != current_time:
                 
-                print(i[1],clip_name)
+                ti = previous_time / self.convert_time
+                tf = current_time / self.convert_time
                 
-                temp_name = temp_path + "subclip" + str(int( current_time / self.convert_time )) + ".mp4"
+                print(i[1],ti,tf)
                 
-                subclip = ffmpeg_extract_subclip(clip_name, previous_time / self.convert_time , \
-                                                 current_time / self.convert_time \
-                                                     , targetname=temp_name)
+                if i[1] == 1:
+                    clip = self.video1.video_file
+                elif i[1] == 2:
+                    clip = self.video2.video_file
+                
+                subclip = clip.subclip(ti,tf)
+                
+                concatenate_clips.append(subclip)
+                
+                # temp_name = temp_path + "subclip" + str(int( ti )) + ".mp4"
+                
+                
+                # subclip = ffmpeg_extract_subclip(clip_name, ti , tf \
+                #                                      , targetname=temp_name)
             
-                subclip_obj = video(temp_name)
+                # subclip_obj = video(temp_name)
           
-                concatenate_clips.append(subclip_obj.video_file)
+                # concatenate_clips.append(subclip_obj.video_file)
             
-                print("\n>>Time interval:",int(previous_time),'-',int(current_time),\
-                      ' Total time:',int(self.audio_duration))
+                # print("\n>>Time interval:",int(previous_time),'-',int(current_time),\
+                #       ' Total time:',int(self.audio_duration))
             
             previous_time = current_time
-            
-        final_video = me.concatenate_videoclips(concatenate_clips)    
+        
+        
+        final_video = me.concatenate_videoclips(concatenate_clips,method='compose')
+        max_fps = max(clip.fps for clip in concatenate_clips)
+
         print("save final video",final_video.duration,current_time)
         final_video_obj = video( video_file = final_video)
         final_video_obj.change_audio( final_audio )
-        final_video_obj.save_video("final_video.mp4")
+        final_video_obj.save_video("final_video.mp4",max_fps)
         # try:
         #     final_video.write_videofile("final_video.mp4", codec="mpeg4")
         # except IndexError:
@@ -214,25 +228,25 @@ class edit_tools:
 #This part is just for testing
 
 
-name = "Video_sound3.mp4"
+# name = "Video_sound3.mp4"
 
-path = "D:/GoogleDrive/Despolariza/"    
-
-
-video_test1 = video(name,path)
+# path = "D:/GoogleDrive/Despolariza/"    
 
 
-video_test1.upload_audio("sound3.wav")
+# video_test1 = video(name,path)
 
-#concat_video_by_sound
 
-name = "Video_sound4.mp4"
+# video_test1.upload_audio("sound3.wav")
 
-video_test2 = video(name,path)
+# #concat_video_by_sound
 
-video_test2.upload_audio("sound4.wav")
+# name = "Video_sound4.mp4"
 
-obj_tools = edit_tools(video_test1,video_test2,path,(0,10,0))
+# video_test2 = video(name,path)
 
-obj_tools.concat_video_by_sound()
+# video_test2.upload_audio("sound4.wav")
+
+# obj_tools = edit_tools(video_test1,video_test2,path,(0,5,0))
+
+# obj_tools.concat_video_by_sound()
 
