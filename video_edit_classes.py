@@ -2,7 +2,7 @@
 """
 Created on Sat Jun  4 22:48:38 2022
 
-@author: Acer
+@author: Rafael Pavão
 """
 import moviepy.editor as me
 import wave as wv
@@ -83,13 +83,16 @@ class video:
         os.remove(temp_name)
         
 class edit_tools:
-    def __init__(self,video1,video2,path='',parameters=(0,0,0)):
+    def __init__(self,video1,video2,video3=False,path='',parameters=(0,0,0)):
         self.path = path
         self.higher_sound = []
         self.video1 = video1
         self.video2 = video2
-#        self.video3 = video3
-        self.cutoff = parameters[0]
+        self.video3 = video3
+        if parameters[0] == 0:
+            self.cutoff = float('-inf')
+        else:
+            self.cutoff = parameters[0]
         self.convert_time = 1000 #seconds -> miliseconds
         self.resolution = parameters[1] * self.convert_time
         self.volume_reduction_factor = parameters[2]
@@ -111,20 +114,22 @@ class edit_tools:
             
             audio_piece1 = audio_file1[time:time + time_difference]
             audio_piece2 = audio_file2[time:time + time_difference] 
-        
-            # if audio_piece1 < self.cutoff and audio_piece1 < self.cutoff:
-            #     video_id = 3
-            #     audio_piece1 -= self.volume_reduction_factor
-            #     audio_piece2 -= self.volume_reduction_factor
+    
             
-            if audio_piece1.dBFS > audio_piece2.dBFS: #This is ok, it goes from -inf to 0
-                higher_sound.append([time,1])
+            if ( audio_piece1.dBFS < self.cutoff and audio_piece2.dBFS < self.cutoff ) \
+                or -1 * abs(audio_piece1.dBFS - audio_piece2.dBFS) <= self.cutoff:
+                higher_sound.append([time,2]) #video 3 
+                audio_piece1 = audio_piece1 / 2
+                audio_piece2 = audio_piece1 / 2
+                
+            elif audio_piece1.dBFS > audio_piece2.dBFS: #This is ok, it goes from -inf to 0 
+                higher_sound.append([time,0]) #video 1
                 if volume_reduction_factor == 0:
                     audio_piece2 = 0
                 else:
                     audio_piece2 -= volume_reduction_factor
             else:
-                higher_sound.append([time,2])
+                higher_sound.append([time,1]) #video 2
                 if volume_reduction_factor == 0:
                     audio_piece1 = 0
                 else:
@@ -159,14 +164,21 @@ class edit_tools:
                               self.resolution,self.volume_reduction_factor)
         return final_audio
 
-    def concat_video_by_sound(self):
+    def concat_video_by_sound(self, final_name = 'final_video.mp4'):
         previous_time = 0
         
         final_audio = self.get_video_sound_map()
         
         concatenate_clips = []
         
-        temp_path = "D:/GoogleDrive/Despolariza/despolariza_video_edit/temp/"
+        # temp_path = "D:/GoogleDrive/Despolariza/despolariza_video_edit/temp/"
+        
+        try:
+            video3_file = self.video3.video_file
+        except AttributeError:
+            video3_file = False
+        
+        videos = (self.video1.video_file,self.video2.video_file,video3_file)
  
         for i in self.higher_sound:
             
@@ -185,28 +197,21 @@ class edit_tools:
                 
                 print(i[1],ti,tf)
                 
-                if i[1] == 1:
-                    clip = self.video1.video_file
-                elif i[1] == 2:
-                    clip = self.video2.video_file
+                
+                clip = videos[i[1]]
+                
+                if clip == False:
+                    continue
+                
+                # if i[1] == 1:
+                #     clip = self.video1.video_file
+                # elif i[1] == 2:
+                #     clip = self.video2.video_file
                 
                 subclip = clip.subclip(ti,tf)
                 
                 concatenate_clips.append(subclip)
                 
-                # temp_name = temp_path + "subclip" + str(int( ti )) + ".mp4"
-                
-                
-                # subclip = ffmpeg_extract_subclip(clip_name, ti , tf \
-                #                                      , targetname=temp_name)
-            
-                # subclip_obj = video(temp_name)
-          
-                # concatenate_clips.append(subclip_obj.video_file)
-            
-                # print("\n>>Time interval:",int(previous_time),'-',int(current_time),\
-                #       ' Total time:',int(self.audio_duration))
-            
             previous_time = current_time
         
         
@@ -216,13 +221,9 @@ class edit_tools:
         print("save final video",final_video.duration,current_time)
         final_video_obj = video( video_file = final_video)
         final_video_obj.change_audio( final_audio )
-        final_video_obj.save_video("final_video.mp4",max_fps)
-        # try:
-        #     final_video.write_videofile("final_video.mp4", codec="mpeg4")
-        # except IndexError:
-        #     # Short by one frame, so get rid on the last frame:
-        #     final_video = final_video.subclip(t_end=(final_video.duration - 1.0/final_video.fps))
-        #     final_video.write_videofile("final_video.mp4", codec="mpeg4")        
+        
+        final_video_name = self.path + final_name
+        final_video_obj.save_video(final_video_name,max_fps)        
             
         
 #This part is just for testing
