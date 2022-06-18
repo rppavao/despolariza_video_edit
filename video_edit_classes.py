@@ -115,27 +115,28 @@ class edit_tools:
             audio_piece1 = audio_file1[time:time + time_difference]
             audio_piece2 = audio_file2[time:time + time_difference] 
     
-            
-            if ( audio_piece1.dBFS < self.cutoff and audio_piece2.dBFS < self.cutoff ) \
-                or -1 * abs(audio_piece1.dBFS - audio_piece2.dBFS) <= self.cutoff:
-                higher_sound.append([time,2]) #video 3 
-                audio_piece1 = audio_piece1 / 2
-                audio_piece2 = audio_piece1 / 2
-                
-            elif audio_piece1.dBFS > audio_piece2.dBFS: #This is ok, it goes from -inf to 0 
-                higher_sound.append([time,0]) #video 1
+            audio1_dBFS = audio_piece1.dBFS
+            audio2_dBFS = audio_piece2.dBFS
+    
+            if ( audio1_dBFS < self.cutoff and audio2_dBFS < self.cutoff ) \
+                or -1 * abs(audio1_dBFS - audio2_dBFS) <= self.cutoff:
+                higher_sound.append([time,2,max(audio1_dBFS,audio2_dBFS)]) #video 3 
+                audio_piece1 = audio_piece1 - abs(audio1_dBFS)/2
+                audio_piece2 = audio_piece2 - abs(audio2_dBFS)/2
+                1 / 2
+            elif audio1_dBFS > audio2_dBFS: #This is ok, it goes from -inf to 0 
+                higher_sound.append([time,0,max(audio1_dBFS,audio2_dBFS)]) #video 1
                 if volume_reduction_factor == 0:
                     audio_piece2 = 0
                 else:
                     audio_piece2 -= volume_reduction_factor
             else:
-                higher_sound.append([time,1]) #video 2
+                higher_sound.append([time,1,max(audio1_dBFS,audio2_dBFS)]) #video 2
                 if volume_reduction_factor == 0:
                     audio_piece1 = 0
                 else:
                     audio_piece1 -= volume_reduction_factor
                     
-            # print('>',time + time_difference,time_difference,audio_duration)
             if time + time_difference > audio_duration:
                 time_difference = audio_duration - time
             time += time_difference
@@ -171,8 +172,6 @@ class edit_tools:
         
         concatenate_clips = []
         
-        # temp_path = "D:/GoogleDrive/Despolariza/despolariza_video_edit/temp/"
-        
         try:
             video3_file = self.video3.video_file
         except AttributeError:
@@ -184,29 +183,17 @@ class edit_tools:
             
             current_time = i[0]
             
-            # if i[1] == 1:
-            #     clip_name = self.video1.path + self.video1.video_name
-            # elif i[1] == 2:
-            #     clip_name = self.video2.path + self.video2.video_name
-            # else:
-            #     clip_name = self.video3.path + self.video3.video_name
             if previous_time != current_time:
                 
                 ti = previous_time / self.convert_time
                 tf = current_time / self.convert_time
                 
-                print(i[1],ti,tf)
-                
-                
+                print('Video',i[1]+1,'ti=',ti,'tf=',tf,'dBFS=',i[2])
+                         
                 clip = videos[i[1]]
                 
                 if clip == False:
                     continue
-                
-                # if i[1] == 1:
-                #     clip = self.video1.video_file
-                # elif i[1] == 2:
-                #     clip = self.video2.video_file
                 
                 subclip = clip.subclip(ti,tf)
                 
@@ -225,29 +212,4 @@ class edit_tools:
         final_video_name = self.path + final_name
         final_video_obj.save_video(final_video_name,max_fps)        
             
-        
-#This part is just for testing
-
-
-# name = "Video_sound3.mp4"
-
-# path = "D:/GoogleDrive/Despolariza/"    
-
-
-# video_test1 = video(name,path)
-
-
-# video_test1.upload_audio("sound3.wav")
-
-# #concat_video_by_sound
-
-# name = "Video_sound4.mp4"
-
-# video_test2 = video(name,path)
-
-# video_test2.upload_audio("sound4.wav")
-
-# obj_tools = edit_tools(video_test1,video_test2,path,(0,5,0))
-
-# obj_tools.concat_video_by_sound()
-
+    
