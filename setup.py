@@ -6,11 +6,18 @@ Created on Sat Jun 18 11:20:36 2022
 """
 
 import os
+from sys import platform
 
 try:
     from urllib.request import urlretrieve
 except ImportError:
     from urllib import urlretrieve
+
+if platform == 'win32':
+    commands = ('','python get-pip.py','pip install moviepy','pip install pydub')
+else:
+    commands = ('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py','python3 get-pip.py', \
+                'pip install moviepy','pip install pydub')
 
 print('\nSetup will start')
 
@@ -19,12 +26,14 @@ print('\nSetup will start')
 # os.system('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
 
 print('\n>> Installing pip')
-os.system('python get-pip.py')
+if platform != 'win32':
+    os.system(commands[0])
+os.system(commands[1])
 
 print('\n>> Installing Moviepy')
-os.system('pip install moviepy')
+os.system(commands[2])
 
 print('\n>> Installing pydub')
-os.system('pip install pydub')
+os.system(commands[3])
 
 print('\nSetup completed!')
