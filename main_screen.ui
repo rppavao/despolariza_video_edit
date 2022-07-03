@@ -19,18 +19,8 @@
      <rect>
       <x>20</x>
       <y>30</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListView" name="listView">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>30</y>
-      <width>256</width>
-      <height>192</height>
+      <width>771</width>
+      <height>281</height>
      </rect>
     </property>
    </widget>
@@ -47,23 +37,10 @@
      <string>Directory</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="labelVideo1">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>10</y>
-      <width>51</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Files</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
+      <x>820</x>
       <y>40</y>
       <width>171</width>
       <height>16</height>
@@ -73,10 +50,10 @@
      <string>Video 1</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="labelAudio1">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>820</x>
       <y>70</y>
       <width>171</width>
       <height>16</height>
@@ -86,10 +63,10 @@
      <string>Audio 1</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="labelVideo2">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>820</x>
       <y>100</y>
       <width>171</width>
       <height>16</height>
@@ -99,10 +76,10 @@
      <string>Video 2</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="labelAudio2">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>820</x>
       <y>130</y>
       <width>171</width>
       <height>16</height>
@@ -112,10 +89,10 @@
      <string>Audio 2</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="labelVideo3">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>820</x>
       <y>160</y>
       <width>171</width>
       <height>16</height>
@@ -125,11 +102,11 @@
      <string>Video 3</string>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider">
+   <widget class="QSlider" name="sliderCutoff">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>270</y>
+      <x>240</x>
+      <y>340</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -138,11 +115,11 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider_2">
+   <widget class="QSlider" name="sliderResolution">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>310</y>
+      <x>240</x>
+      <y>380</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -151,11 +128,11 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider_3">
+   <widget class="QSlider" name="sliderReduction">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>350</y>
+      <x>240</x>
+      <y>420</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -164,11 +141,11 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="labelCutoff">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>270</y>
+      <x>140</x>
+      <y>340</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -177,11 +154,11 @@
      <string>Cutoff</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="labelResolution">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>310</y>
+      <x>140</x>
+      <y>380</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -190,11 +167,11 @@
      <string>Resolution</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="labelReduction">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>350</y>
+      <x>140</x>
+      <y>420</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -206,8 +183,8 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>420</y>
+      <x>550</x>
+      <y>470</y>
       <width>118</width>
       <height>23</height>
      </rect>
@@ -216,11 +193,11 @@
      <number>24</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
+   <widget class="QLabel" name="labelCutoffUnits">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>270</y>
+      <x>430</x>
+      <y>340</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -229,11 +206,11 @@
      <string>dBFS</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
+   <widget class="QLabel" name="labelResolutionUnits">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>310</y>
+      <x>430</x>
+      <y>380</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -242,11 +219,11 @@
      <string>s</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QLabel" name="labelReductionUnits">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>350</y>
+      <x>430</x>
+      <y>420</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -255,21 +232,21 @@
      <string>dBFS</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QGraphicsView" name="finalVideoView">
     <property name="geometry">
      <rect>
-      <x>350</x>
-      <y>470</y>
+      <x>440</x>
+      <y>520</y>
       <width>311</width>
       <height>211</height>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="buttonPlay">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>700</y>
+      <x>490</x>
+      <y>750</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -278,11 +255,11 @@
      <string>Play</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="buttonSave">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>700</y>
+      <x>630</x>
+      <y>750</y>
       <width>75</width>
       <height>23</height>
      </rect>
