@@ -165,7 +165,7 @@ class edit_tools:
                               self.resolution,self.volume_reduction_factor)
         return final_audio
 
-    def concat_video_by_sound(self, final_name = 'final_video.mp4'):
+    def concat_video_by_sound(self, final_name = 'final_video.mp4',progress=False):
         previous_time = 0
         
         final_audio = self.get_video_sound_map()
@@ -178,6 +178,8 @@ class edit_tools:
             video3_file = False
         
         videos = (self.video1.video_file,self.video2.video_file,video3_file)
+        
+        total_time = self.higher_sound[-1][0] / self.convert_time
  
         for i in self.higher_sound:
             
@@ -188,7 +190,13 @@ class edit_tools:
                 ti = previous_time / self.convert_time
                 tf = current_time / self.convert_time
                 
-                print('Video',i[1]+1,'ti=',ti,'tf=',tf,'dBFS=',i[2])
+                if progress != False:
+                    percentage = int( 100 * tf / total_time )
+                    if percentage != 0:
+                       percentage -= 1
+                    progress(percentage)
+                
+                print('Video',i[1]+1,'ti=',ti,'tf=',tf,'dBFS=',i[2],int( 100 * tf / total_time ))
                          
                 clip = videos[i[1]]
                 
@@ -210,6 +218,9 @@ class edit_tools:
         final_video_obj.change_audio( final_audio )
         
         final_video_name = self.path + final_name
-        final_video_obj.save_video(final_video_name,max_fps)        
+        
+        return final_video_name,final_video_obj,max_fps
+        
+        #final_video_obj.save_video(final_video_name,max_fps)        
             
     

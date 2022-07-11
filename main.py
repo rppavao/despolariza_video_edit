@@ -25,12 +25,16 @@ class videoEditGui(qtw.QMainWindow):
         self.slider_values= [0,0,0]
         self.set_slider_default_value()
         self.ui.progressBar.hide()
+        self.final_video_name = "final_video.mp4"
+        self.final_video_instance = False
+        self.max_fps = 0
         
         self.ui.treeView.doubleClicked.connect(self.treeView_doubleClicked)
         self.ui.sliderCutoff.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=0))
         self.ui.sliderResolution.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=1))
         self.ui.sliderReduction.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=2))
-        self.ui.buttonConvert.clicked.connect(self.start_video_conversion)   
+        self.ui.buttonConvert.clicked.connect(self.start_video_conversion)  
+        self.ui.buttonSave.clicked.connect(self.save_video)  
         
     def set_directory_tree(self):
         model = qtw.QFileSystemModel()
@@ -118,16 +122,28 @@ class videoEditGui(qtw.QMainWindow):
         video2.upload_audio(self.audio_list[1])
         video3 = video(self.video_list[2])
         
-        cutoff = self.ui.sliderCutoff.value
-        resolution = self.ui.sliderResolution.value
-        volume_reduction = self.ui.sliderReduction.value
-        
-        print(cutoff)
+        cutoff = self.ui.sliderCutoff.value()
+        resolution = self.ui.sliderResolution.value()
+        volume_reduction = self.ui.sliderReduction.value()
         
         edit_instance = edit_tools(video1,video2,video3=video3,parameters=(cutoff, \
                                                         resolution,volume_reduction))
             
-        edit_instance.concat_video_by_sound()
+        self.final_video_name,self.final_video_instance, \
+            self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress)    
+        
+        self.get_progress(100)
+        
+    def get_progress(self, value):
+        self.ui.progressBar.setValue(value)
+        
+    def save_video(self):
+        self.final_video_instance.save_video(self.final_video_name,self.max_fps)
+        
+    def play_final_video(self):
+        return 
+        
+        
         
 # path = input("File location: ")
 
