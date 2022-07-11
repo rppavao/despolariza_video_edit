@@ -14,10 +14,10 @@ except ImportError:
     from urllib import urlretrieve
 
 if platform == 'win32':
-    commands = ('','python get-pip.py','pip install moviepy','pip install pydub')
+    commands = ('','python get-pip.py','pip install moviepy','pip install pydub',"pip install pyqt5")
 else:
     commands = ('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py','python3 get-pip.py', \
-                'pip install moviepy','pip install pydub')
+                'pip install moviepy','pip install pydub',"brew install pyqt") 
 
 print('\nSetup will start')
 
