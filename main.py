@@ -8,7 +8,11 @@ from video_edit_classes import *
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtWidgets as qtw
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from screen import Ui_MainWindow
+from PyQt5.QtCore import QUrl
+import sys
 
 class videoEditGui(qtw.QMainWindow):
     
@@ -25,6 +29,8 @@ class videoEditGui(qtw.QMainWindow):
         self.slider_values= [0,0,0]
         self.set_slider_default_value()
         self.ui.progressBar.hide()
+        self.ui.buttonSave.hide()
+        self.ui.buttonPlay.hide()
         self.final_video_name = "final_video.mp4"
         self.final_video_instance = False
         self.max_fps = 0
@@ -34,7 +40,8 @@ class videoEditGui(qtw.QMainWindow):
         self.ui.sliderResolution.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=1))
         self.ui.sliderReduction.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=2))
         self.ui.buttonConvert.clicked.connect(self.start_video_conversion)  
-        self.ui.buttonSave.clicked.connect(self.save_video)  
+        self.ui.buttonSave.clicked.connect(self.save_video)
+        self.ui.buttonPlay.clicked.connect(self.play_final_video)  
         
     def set_directory_tree(self):
         model = qtw.QFileSystemModel()
@@ -130,9 +137,14 @@ class videoEditGui(qtw.QMainWindow):
                                                         resolution,volume_reduction))
             
         self.final_video_name,self.final_video_instance, \
-            self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress)    
+            self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress) 
+            
+        self.final_video_instance.save_video("temp_video.mp4",self.max_fps)
         
         self.get_progress(100)
+        
+        self.ui.buttonSave.show()
+        self.ui.buttonPlay.show()
         
     def get_progress(self, value):
         self.ui.progressBar.setValue(value)
@@ -141,6 +153,19 @@ class videoEditGui(qtw.QMainWindow):
         self.final_video_instance.save_video(self.final_video_name,self.max_fps)
         
     def play_final_video(self):
+        
+        video = QVideoWidget()
+        video.resize(300, 300)
+        video.move(0, 0)
+        
+        player = QMediaPlayer()
+        player.setVideoOutput(video)
+        player.setMedia(QMediaContent(QUrl.fromLocalFile("temp_video.mp4")))
+        player.setVideoOutput(video)
+        player.play()
+        video.show()
+        video.exec_()
+        print("Here")
         return 
         
         

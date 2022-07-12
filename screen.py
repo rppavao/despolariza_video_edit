@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         self.labelReduction.setGeometry(QtCore.QRect(90, 420, 91, 21))
         self.labelReduction.setObjectName("labelReduction")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setGeometry(QtCore.QRect(480, 470, 118, 23))
+        self.progressBar.setGeometry(QtCore.QRect(430, 470, 118, 23))
         self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName("progressBar")
         self.labelCutoffUnits = QtWidgets.QLabel(self.centralwidget)
@@ -69,14 +69,11 @@ class Ui_MainWindow(object):
         self.labelReductionUnits = QtWidgets.QLabel(self.centralwidget)
         self.labelReductionUnits.setGeometry(QtCore.QRect(430, 420, 47, 13))
         self.labelReductionUnits.setObjectName("labelReductionUnits")
-        self.finalVideoView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.finalVideoView.setGeometry(QtCore.QRect(380, 510, 311, 211))
-        self.finalVideoView.setObjectName("finalVideoView")
         self.buttonPlay = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonPlay.setGeometry(QtCore.QRect(430, 740, 75, 23))
+        self.buttonPlay.setGeometry(QtCore.QRect(210, 540, 75, 23))
         self.buttonPlay.setObjectName("buttonPlay")
         self.buttonSave = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonSave.setGeometry(QtCore.QRect(570, 740, 75, 23))
+        self.buttonSave.setGeometry(QtCore.QRect(350, 540, 75, 23))
         self.buttonSave.setObjectName("buttonSave")
         self.labelCutoffValue = QtWidgets.QLabel(self.centralwidget)
         self.labelCutoffValue.setGeometry(QtCore.QRect(210, 340, 16, 16))
@@ -123,14 +120,4 @@ class Ui_MainWindow(object):
         self.labelResValue.setText(_translate("MainWindow", "0"))
         self.labelRedValue.setText(_translate("MainWindow", "0"))
         self.buttonConvert.setText(_translate("MainWindow", "Convert"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 

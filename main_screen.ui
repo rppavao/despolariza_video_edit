@@ -183,7 +183,7 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>430</x>
       <y>470</y>
       <width>118</width>
       <height>23</height>
@@ -232,21 +232,11 @@
      <string>dBFS</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="finalVideoView">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>510</y>
-      <width>311</width>
-      <height>211</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="buttonPlay">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>740</y>
+      <x>210</x>
+      <y>540</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -258,8 +248,8 @@
    <widget class="QPushButton" name="buttonSave">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>740</y>
+      <x>350</x>
+      <y>540</y>
       <width>75</width>
       <height>23</height>
      </rect>
