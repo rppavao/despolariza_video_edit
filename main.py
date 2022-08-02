@@ -13,6 +13,7 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from screen import Ui_MainWindow
 from PyQt5.QtCore import QUrl
 import sys
+import moviepy.editor as me
 
 class videoEditGui(qtw.QMainWindow):
     
@@ -96,7 +97,7 @@ class videoEditGui(qtw.QMainWindow):
         
     def set_slider_default_value(self):
         self.ui.labelCutoffValue.setText("-30")
-        self.ui.labelResValue.setText("2")
+        self.ui.labelResValue.setText("20")
         self.ui.labelRedValue.setText("0")
         
         
@@ -104,9 +105,9 @@ class videoEditGui(qtw.QMainWindow):
         self.ui.sliderCutoff.setMinimum(-100)
         self.ui.sliderCutoff.setValue(-30)
 
-        self.ui.sliderResolution.setMaximum(10)
+        self.ui.sliderResolution.setMaximum(100)
         self.ui.sliderResolution.setMinimum(1)
-        self.ui.sliderResolution.setValue(2)
+        self.ui.sliderResolution.setValue(20)
         
         self.ui.sliderReduction.setMaximum(0)
         self.ui.sliderReduction.setMinimum(-100)
@@ -130,7 +131,7 @@ class videoEditGui(qtw.QMainWindow):
         video3 = video(self.video_list[2])
         
         cutoff = self.ui.sliderCutoff.value()
-        resolution = self.ui.sliderResolution.value()
+        resolution = self.ui.sliderResolution.value() / 10
         volume_reduction = self.ui.sliderReduction.value()
         
         edit_instance = edit_tools(video1,video2,video3=video3,parameters=(cutoff, \
@@ -139,6 +140,7 @@ class videoEditGui(qtw.QMainWindow):
         self.final_video_name,self.final_video_instance, \
             self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress) 
             
+        self.final_video_instance.change_audio(self.final_video_instance.audio_file,True)
         self.final_video_instance.save_video("temp_video.mp4",self.max_fps)
         
         self.get_progress(100)

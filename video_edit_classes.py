@@ -57,30 +57,19 @@ class video:
         input_audio = pd.AudioSegment.from_wav(self.path + audio_file_name)
         self.change_audio(input_audio)         
     
-    def change_audio(self,new_audio_file):
+    def change_audio(self,new_audio_file,in_video = False):
         self.audio_file = new_audio_file    
-        return
+        
+        if in_video == True:
+            temp_name = self.path+"temp_audio.wav"
+        
+            self.save_audio(temp_name)
+            new_audioclip = me.AudioFileClip(temp_name)
+            self.video_file.audio = new_audioclip
+        
+    def remove_audio(self):
+        self.video_file = self.video_file.without_audio()
     
-        temp_name = self.path+"temp_audio.wav"
-        
-        video_duration = self.video_file.duration
-        
-        if new_audio_file.duration_seconds > video_duration:
-            new_audio_file = new_audio_file[:video_duration * 1000]
-        else:
-            time_diference = video_duration - new_audio_file.duration_seconds
-            second_of_silence = pd.AudioSegment.silent(duration=time_diference * 1000) # or be explicit
-            new_audio_file += second_of_silence
-        
-        new_audio_file.export(temp_name, format="wav")
-        input_audio = me.AudioFileClip(temp_name)
-        
-        self.audio_file = input_audio
-        self.video_file = self.video_file.set_audio(input_audio)
-        
-        input_audio.close()
-        
-        os.remove(temp_name)
         
 class edit_tools:
     def __init__(self,video1,video2,video3=False,path='',parameters=(0,0,0)):
@@ -89,6 +78,7 @@ class edit_tools:
         self.video1 = video1
         self.video2 = video2
         self.video3 = video3
+        self.video3.remove_audio()
         if parameters[0] == 0:
             self.cutoff = float('-inf')
         else:
@@ -117,35 +107,34 @@ class edit_tools:
     
             audio1_dBFS = audio_piece1.dBFS
             audio2_dBFS = audio_piece2.dBFS
-    
-            if ( audio1_dBFS < self.cutoff and audio2_dBFS < self.cutoff ) \
-                or -1 * abs(audio1_dBFS - audio2_dBFS) <= self.cutoff:
-                higher_sound.append([time,2,max(audio1_dBFS,audio2_dBFS)]) #video 3 
-                audio_piece1 = audio_piece1 - abs(audio1_dBFS)/2
-                audio_piece2 = audio_piece2 - abs(audio2_dBFS)/2
-                1 / 2
+   
+            audio_piece1 = audio_piece1 - abs(audio1_dBFS)/2
+            audio_piece2 = audio_piece2 - abs(audio2_dBFS)/2
+            
+            audio_piece = audio_piece1.overlay(audio_piece2)
+   
+            if ( audio1_dBFS < self.cutoff and audio2_dBFS < self.cutoff ):
+                # or (audio1_dBFS > self.cutoff and audio2_dBFS > self.cutoff):
+                higher_sound.append([time,2,audio_piece]) #video 3 
+
+            elif abs(audio1_dBFS - audio2_dBFS) < 2:
+                higher_sound.append([time,2,audio_piece]) #video 3           
+                
             elif audio1_dBFS > audio2_dBFS: #This is ok, it goes from -inf to 0 
-                higher_sound.append([time,0,max(audio1_dBFS,audio2_dBFS)]) #video 1
-                if volume_reduction_factor == 0:
-                    audio_piece2 = 0
-                else:
-                    audio_piece2 -= volume_reduction_factor
+                higher_sound.append([time,0,audio_piece]) #video 1
+
             else:
-                higher_sound.append([time,1,max(audio1_dBFS,audio2_dBFS)]) #video 2
-                if volume_reduction_factor == 0:
-                    audio_piece1 = 0
-                else:
-                    audio_piece1 -= volume_reduction_factor
+                higher_sound.append([time,1,audio_piece]) #video 2
                     
             if time + time_difference > audio_duration:
                 time_difference = audio_duration - time
             time += time_difference
             
             if first_iteration == True:
-                final_audio = audio_piece1 + audio_piece2
+                final_audio = audio_piece
                 first_iteration = False
             else:
-                final_audio = final_audio + audio_piece1 + audio_piece2
+                final_audio  = final_audio + audio_piece
         return higher_sound,final_audio
     
     def get_video_sound_map(self):
@@ -153,7 +142,7 @@ class edit_tools:
         audio_file1 = self.video1.audio_file
         audio_file2 = self.video2.audio_file
             
-        audio_duration = ( lambda x: max(x) )([audio_file1.duration_seconds, \
+        audio_duration = ( lambda x: min(x) )([audio_file1.duration_seconds, \
                                                audio_file2.duration_seconds])        
         audio_duration *= self.convert_time
         
@@ -202,6 +191,8 @@ class edit_tools:
                 
                 if clip == False:
                     continue
+                
+                print(total_time,tf)
                 
                 subclip = clip.subclip(ti,tf)
                 
