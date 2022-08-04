@@ -27,10 +27,10 @@ class videoEditGui(qtw.QMainWindow):
         self.video_list = []
         self.audio_list = []
         self.msg = QMessageBox()
-        self.slider_values= [0,0,0]
+        self.slider_values = [0,0,0,0,0]
         self.set_slider_default_value()
         self.ui.progressBar.hide()
-        self.ui.buttonSave.hide()
+        # self.ui.buttonSave.hide()
         self.ui.buttonPlay.hide()
         self.final_video_name = "final_video.mp4"
         self.final_video_instance = False
@@ -40,9 +40,14 @@ class videoEditGui(qtw.QMainWindow):
         self.ui.sliderCutoff.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=0))
         self.ui.sliderResolution.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=1))
         self.ui.sliderReduction.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=2))
+        self.ui.sliderCutoffVideo3.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=3))
+        self.ui.sliderChangeTime.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=4))
+
         self.ui.buttonConvert.clicked.connect(self.start_video_conversion)  
-        self.ui.buttonSave.clicked.connect(self.save_video)
-        self.ui.buttonPlay.clicked.connect(self.play_final_video)  
+        self.ui.buttonPlay.clicked.connect(self.play_final_video)
+        
+        self.ui.actionSave.triggered.connect(self.save_video)
+
         
     def set_directory_tree(self):
         model = qtw.QFileSystemModel()
@@ -50,7 +55,7 @@ class videoEditGui(qtw.QMainWindow):
         
         treeView = self.ui.treeView
         treeView.setModel(model)
-        
+
     def treeView_doubleClicked(self,index):
         file_name = index.model().filePath(index)
         
@@ -58,16 +63,15 @@ class videoEditGui(qtw.QMainWindow):
             if len(self.video_list) < 3:
                 self.video_list.append(file_name)
             else:
-                self_video_list = [file_name]
+                self.video_list = [file_name]
+                
         elif file_name[-3:] == 'wav':
             if len(self.audio_list) < 3:
                 self.audio_list.append(file_name)
             else:
-                self_audio_list = [file_name]
+                self.audio_list = [file_name]
         else:
-            self.msg.setWindowTitle("Warning")
-            self.msg.setText("Video and audio files should be .mp4 and .wav, respectively!")
-            msg = self.msg.exec_()
+            self.trigger_error(3)
                 
         videoLabel = {0:self.ui.labelVideo1, 1:self.ui.labelVideo2, 2:self.ui.labelVideo3}
         audioLabel = {0:self.ui.labelAudio1, 1:self.ui.labelAudio2}
@@ -90,35 +94,50 @@ class videoEditGui(qtw.QMainWindow):
             
     def get_slider_value(self,value,slider):
         
-        sliderLabelList = (self.ui.labelCutoffValue, self.ui.labelResValue, self.ui.labelRedValue)
-        
+        sliderLabelList = (self.ui.labelCutoffValue, self.ui.labelResValue, self.ui.labelRedValue, \
+                           self.ui.labelCutoffVideo3Value, self.ui.labelChangeTimeValue )
+            
         self.slider_values[slider] = value
-        sliderLabelList[slider].setText(str(value))
+        
+        if slider in (1,4):
+            value = value / 10
+            value_str = "{0:.2f}".format(value)
+        else:
+            value_str = str(value)
+        
+        sliderLabelList[slider].setText(value_str)
         
     def set_slider_default_value(self):
         self.ui.labelCutoffValue.setText("-30")
-        self.ui.labelResValue.setText("20")
+        self.ui.labelResValue.setText("0.5")
         self.ui.labelRedValue.setText("0")
-        
+        self.ui.labelCutoffVideo3Value.setText("5")
+        self.ui.labelChangeTimeValue.setText("0.5")        
         
         self.ui.sliderCutoff.setMaximum(0)
         self.ui.sliderCutoff.setMinimum(-100)
-        self.ui.sliderCutoff.setValue(-30)
+        self.ui.sliderCutoff.setValue(-50)
 
-        self.ui.sliderResolution.setMaximum(100)
+        self.ui.sliderResolution.setMaximum(50)
         self.ui.sliderResolution.setMinimum(1)
-        self.ui.sliderResolution.setValue(20)
+        self.ui.sliderResolution.setValue(5)
         
         self.ui.sliderReduction.setMaximum(0)
         self.ui.sliderReduction.setMinimum(-100)
         self.ui.sliderReduction.setValue(0)
         
+        self.ui.sliderCutoffVideo3.setMaximum(100)
+        self.ui.sliderCutoffVideo3.setMinimum(0)
+        self.ui.sliderCutoffVideo3.setValue(5)
+
+        self.ui.sliderChangeTime.setMaximum(50)
+        self.ui.sliderChangeTime.setMinimum(1)
+        self.ui.sliderChangeTime.setValue(5)        
+        
     def start_video_conversion(self):
         if len(self.video_list) < 3 or \
             len(self.audio_list) < 2:
-            self.msg.setWindowTitle("Error")
-            self.msg.setText("Please select 3 videos and 2 audios!")
-            msg = self.msg.exec_()
+            self.trigger_error(0)
             return
 
         self.ui.progressBar.show()
@@ -132,10 +151,18 @@ class videoEditGui(qtw.QMainWindow):
         
         cutoff = self.ui.sliderCutoff.value()
         resolution = self.ui.sliderResolution.value() / 10
-        volume_reduction = self.ui.sliderReduction.value()
+        volumeReduction = self.ui.sliderReduction.value()
+        cutoffVideo3 = self.ui.sliderCutoffVideo3.value()
+        changeTime = self.ui.sliderChangeTime.value() / 10  
         
-        edit_instance = edit_tools(video1,video2,video3=video3,parameters=(cutoff, \
-                                                        resolution,volume_reduction))
+        # if changeTime > resolution:
+        #     print(changeTime,resolution)
+        #     self.trigger_error(1)
+        #     return
+        
+        parameters = (cutoff,resolution,volumeReduction,cutoffVideo3,changeTime)
+        
+        edit_instance = edit_tools(video1,video2,video3=video3,parameters=parameters)
             
         self.final_video_name,self.final_video_instance, \
             self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress) 
@@ -145,7 +172,6 @@ class videoEditGui(qtw.QMainWindow):
         
         self.get_progress(100)
         
-        self.ui.buttonSave.show()
         self.ui.buttonPlay.show()
         
     def get_progress(self, value):
@@ -170,7 +196,16 @@ class videoEditGui(qtw.QMainWindow):
         print("Here")
         return 
         
+    def trigger_error(self,error):
         
+        errors = ("Please select 3 videos and 2 audios!", \
+                  "Change time must be smaller than Resolution!",\
+                  "Video and audio files should be .mp4 and .wav, respectively!")
+        
+        self.msg.setWindowTitle("Error")
+        self.msg.setText(errors[error])
+        msg = self.msg.exec_()
+
         
 # path = input("File location: ")
 

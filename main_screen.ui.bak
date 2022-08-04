@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
+    <width>1034</width>
     <height>816</height>
    </rect>
   </property>
@@ -106,7 +106,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>360</y>
+      <y>340</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -119,7 +119,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>400</y>
+      <y>380</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -132,7 +132,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>440</y>
+      <y>420</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -145,7 +145,7 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>360</y>
+      <y>340</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -158,7 +158,7 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>400</y>
+      <y>380</y>
       <width>71</width>
       <height>16</height>
      </rect>
@@ -171,7 +171,7 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>440</y>
+      <y>420</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -183,9 +183,9 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>560</y>
-      <width>331</width>
+      <x>430</x>
+      <y>580</y>
+      <width>118</width>
       <height>23</height>
      </rect>
     </property>
@@ -197,7 +197,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>360</y>
+      <y>340</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -210,20 +210,20 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>400</y>
+      <y>380</y>
       <width>47</width>
       <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string>s</string>
+     <string>s / 10</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelReductionUnits">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>440</y>
+      <y>420</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -235,22 +235,35 @@
    <widget class="QPushButton" name="buttonPlay">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>620</y>
+      <x>210</x>
+      <y>650</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Preview</string>
+     <string>Play</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonSave">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>650</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelCutoffValue">
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>360</y>
-      <width>31</width>
+      <y>340</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
@@ -262,8 +275,8 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>400</y>
-      <width>31</width>
+      <y>380</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
@@ -275,8 +288,8 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>440</y>
-      <width>31</width>
+      <y>420</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
@@ -287,8 +300,8 @@
    <widget class="QPushButton" name="buttonConvert">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>500</y>
+      <x>210</x>
+      <y>580</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -300,8 +313,8 @@
    <widget class="QSlider" name="sliderChangeTime">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>400</y>
+      <x>260</x>
+      <y>500</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -313,8 +326,8 @@
    <widget class="QLabel" name="labelCutoffVideo3">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>360</y>
+      <x>70</x>
+      <y>460</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -326,9 +339,9 @@
    <widget class="QLabel" name="labelCutoffVideo3Value">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>360</y>
-      <width>41</width>
+      <x>210</x>
+      <y>460</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
@@ -339,8 +352,8 @@
    <widget class="QLabel" name="labelCutoffVideo3Units">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>360</y>
+      <x>450</x>
+      <y>460</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -352,9 +365,9 @@
    <widget class="QLabel" name="labelChangeTimeValue">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>400</y>
-      <width>41</width>
+      <x>210</x>
+      <y>500</y>
+      <width>16</width>
       <height>16</height>
      </rect>
     </property>
@@ -365,8 +378,8 @@
    <widget class="QLabel" name="labelChangeTime">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>400</y>
+      <x>70</x>
+      <y>500</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -378,21 +391,21 @@
    <widget class="QLabel" name="labelChangeTimeUnits">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>400</y>
+      <x>450</x>
+      <y>500</y>
       <width>47</width>
       <height>13</height>
      </rect>
     </property>
     <property name="text">
-     <string>s</string>
+     <string>s / 10</string>
     </property>
    </widget>
    <widget class="QSlider" name="sliderCutoffVideo3">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>360</y>
+      <x>260</x>
+      <y>460</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -407,48 +420,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1028</width>
-     <height>21</height>
+     <width>1034</width>
+     <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuSave">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionSave"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="actionSynchronize_Audio"/>
-    <addaction name="actionNormalize_Audio"/>
-   </widget>
-   <addaction name="menuSave"/>
-   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionSave">
-   <property name="text">
-    <string>Save</string>
-   </property>
-  </action>
-  <action name="actionExit">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionSynchronize_Audio">
-   <property name="text">
-    <string>Synchronize Audio</string>
-   </property>
-  </action>
-  <action name="actionNormalize_Audio">
-   <property name="text">
-    <string>Normalize Audio</string>
-   </property>
-  </action>
  </widget>
  <resources/>
  <connections/>

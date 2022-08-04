@@ -72,7 +72,7 @@ class video:
     
         
 class edit_tools:
-    def __init__(self,video1,video2,video3=False,path='',parameters=(0,0,0)):
+    def __init__(self,video1,video2,video3=False,path='',parameters=(0,0,0,0,0)):
         self.path = path
         self.higher_sound = []
         self.video1 = video1
@@ -83,9 +83,14 @@ class edit_tools:
             self.cutoff = float('-inf')
         else:
             self.cutoff = parameters[0]
+        if parameters[3] == 0:
+            self.cutoff_video3 = float('-inf')
+        else:
+            self.cutoff_video3 = parameters[3]
         self.convert_time = 1000 #seconds -> miliseconds
         self.resolution = parameters[1] * self.convert_time
         self.volume_reduction_factor = parameters[2]
+        self.change_time = parameters[4] * self.convert_time
     
     def get_highest_sound_map(self,audio_file1,audio_file2,audio_duration,\
                               time_resolution=1000,volume_reduction_factor=0):        
@@ -117,7 +122,7 @@ class edit_tools:
                 # or (audio1_dBFS > self.cutoff and audio2_dBFS > self.cutoff):
                 higher_sound.append([time,2,audio_piece]) #video 3 
 
-            elif abs(audio1_dBFS - audio2_dBFS) < 2:
+            elif abs(audio1_dBFS - audio2_dBFS) < self.cutoff_video3:
                 higher_sound.append([time,2,audio_piece]) #video 3           
                 
             elif audio1_dBFS > audio2_dBFS: #This is ok, it goes from -inf to 0 
@@ -135,6 +140,7 @@ class edit_tools:
                 first_iteration = False
             else:
                 final_audio  = final_audio + audio_piece
+                
         return higher_sound,final_audio
     
     def get_video_sound_map(self):
@@ -169,15 +175,42 @@ class edit_tools:
         videos = (self.video1.video_file,self.video2.video_file,video3_file)
         
         total_time = self.higher_sound[-1][0] / self.convert_time
- 
-        for i in self.higher_sound:
+        
+        subtract_time = False
+        merge_cells = False
+    
+        for i in range(len(self.higher_sound)):
             
-            current_time = i[0]
+            clip = self.higher_sound[i]
+            
+            if i < len(self.higher_sound) - 1:
+                print("HERE",i,len(self.higher_sound))
+                next_video = self.higher_sound[i + 1][1]
+            else:
+                next_video = False
+            
+            current_time = clip[0]
             
             if previous_time != current_time:
                 
-                ti = previous_time / self.convert_time
+                if merge_cells == False:
+                    ti = previous_time / self.convert_time
                 tf = current_time / self.convert_time
+                
+                if subtract_time == True:
+                    ti += self.change_time / self.convert_time
+                    subtract_time = False
+                
+                if next_video != False:
+                    if next_video != clip[1]:
+                        tf += self.change_time / self.convert_time
+                        subtract_time = True
+                
+                if tf <= ti:
+                    merge_cells = True
+                    continue
+                else:
+                    merge_cells = False
                 
                 if progress != False:
                     percentage = int( 100 * tf / total_time )
@@ -185,16 +218,15 @@ class edit_tools:
                        percentage -= 1
                     progress(percentage)
                 
-                print('Video',i[1]+1,'ti=',ti,'tf=',tf,'dBFS=',i[2],int( 100 * tf / total_time ))
+                print('Video',clip[1]+1,'ti=',ti,'tf=',tf,'dBFS=',clip[2],\
+                      int( 100 * tf / total_time ))
                          
-                clip = videos[i[1]]
+                video_i = videos[clip[1]]
                 
-                if clip == False:
+                if video_i == False:
                     continue
                 
-                print(total_time,tf)
-                
-                subclip = clip.subclip(ti,tf)
+                subclip = video_i.subclip(ti,tf)
                 
                 concatenate_clips.append(subclip)
                 
@@ -203,9 +235,10 @@ class edit_tools:
         
         final_video = me.concatenate_videoclips(concatenate_clips,method='compose')
         max_fps = max(clip.fps for clip in concatenate_clips)
+        
 
         print("save final video",final_video.duration,current_time)
-        final_video_obj = video( video_file = final_video)
+        final_video_obj = video( video_file = final_video )
         final_video_obj.change_audio( final_audio )
         
         final_video_name = self.path + final_name
