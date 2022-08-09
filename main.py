@@ -11,9 +11,8 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from screen import Ui_MainWindow
+from normalizescreen import Ui_NormalizeWindow
 from PyQt5.QtCore import QUrl
-import sys
-import moviepy.editor as me
 
 class videoEditGui(qtw.QMainWindow):
     
@@ -47,6 +46,7 @@ class videoEditGui(qtw.QMainWindow):
         self.ui.buttonPlay.clicked.connect(self.play_final_video)
         
         self.ui.actionSave.triggered.connect(self.save_video)
+        self.ui.actionNormalize_Audio.triggered.connect(self.normalize_audio)
 
         
     def set_directory_tree(self):
@@ -200,48 +200,67 @@ class videoEditGui(qtw.QMainWindow):
         
         errors = ("Please select 3 videos and 2 audios!", \
                   "Change time must be smaller than Resolution!",\
-                  "Video and audio files should be .mp4 and .wav, respectively!")
+                  "Video and audio files should be .mp4 and .wav, respectively!",\
+                  "Please select 2 audios!")
         
         self.msg.setWindowTitle("Error")
         self.msg.setText(errors[error])
         msg = self.msg.exec_()
-
         
-# path = input("File location: ")
-
-# video_name1 = input("Name of first video (mp4): ")
-# audio_name1 = input("Name of first audio (wav): ")
-
-# video_name2 = input("Name of second video (mp4): ")
-# audio_name2 = input("Name of second audio (wav): ")
-
-# video_name3 = input("Name of third video (optional): ")
-
-# print(">>>Uploading files...")
-
-# video1 = video(video_name1,path)
-# video1.upload_audio(audio_name1)
-# video2 = video(video_name2,path)
-# video2.upload_audio(audio_name2)
-# if video_name3 != '':
-#     video3 = video(video_name3,path)
-
-# print(">>>Finished uploading!")
-
-# cutoff = int( input("Specify sound cutoff (in dBFS [-inf,0]) for third video: ") )
-# resolution = int( input("Time resolution (seconds): ") )
-# volume_reduction = 0 #int( input("Reduction factor (in dBFS [-inf,0]): ") )
-
-# edit_instance = edit_tools(video1,video2,video3=video3,path=path,parameters=(cutoff, \
-#                                                 resolution,volume_reduction))
+    def normalize_audio(self):
+        if len(self.audio_list) < 2:
+            self.trigger_error(3)
+            return      
+        self.normalizeWindow = normalizeGui(self.audio_list[0],self.audio_list[1] \
+                                           ,self.ui.sliderResolution.value() / 10)
+        self.normalizeWindow.showWindow()
+             
+        
+class normalizeGui(qtw.QMainWindow):
     
-# print(">>>Video processing started...")
+    def __init__(self,audio1,audio2,sliceSize,*args,**kwargs):
+        super().__init__(*args,**kwargs)  
 
-# edit_instance.concat_video_by_sound()
+        self.window =  qtw.QMainWindow()
+        self.ui = Ui_NormalizeWindow()
+        self.ui.setupUi(self.window)           
+        
+        self.targetDBFS = self.getMaxAudioValue(audio1,audio2,sliceSize)
+    
+        self.setSliderValues()    
+    
+        self.ui.sliderNormalize.valueChanged[int].connect(self.getSliderValue)
 
-# print(">>>Video processing ended!")
-# print(">>>New file name 'final_video.mp4' was created!")
+        self.ui.buttonNormalize.clicked.connect(lambda x: self.normalizeAudio(audio1,audio2))
 
+    def showWindow(self):
+        self.window.show()
+        
+    def normalizeAudio(self,audio1,audio2):
+        tools = edit_tools()
+        tools.normalize_audio(audio1,self.targetDBFS)
+        tools.normalize_audio(audio2,self.targetDBFS)
+    
+    def setSliderValues(self):
+        self.ui.labelNormalizeValue.setText(str(self.targetDBFS))      
+        
+        self.ui.sliderNormalize.setMaximum(0)
+        self.ui.sliderNormalize.setMinimum(-100)
+        self.ui.sliderNormalize.setValue(int(self.targetDBFS))        
+    
+    def getSliderValue(self,value):      
+        self.targetDBFS = value  
+        self.ui.labelNormalizeValue.setText(str(value))
+        
+        
+    def getMaxAudioValue(self,audio1,audio2,sliceSize):
+        tools = edit_tools()
+        
+        max1 = tools.get_max_audio(audio1,sliceSize)
+        max2 = tools.get_max_audio(audio2,sliceSize)
+        
+        return max(max1,max2)
+        
 
 if __name__ == "__main__" :
     app = qtw.QApplication([])

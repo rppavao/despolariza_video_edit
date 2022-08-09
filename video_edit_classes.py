@@ -9,6 +9,7 @@ import wave as wv
 import pydub as pd
 import os
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from pydub.utils import make_chunks
 
 class video:
     def __init__(self,video_name='',path='',video_file=False,audio_name=''):
@@ -20,10 +21,13 @@ class video:
         elif video_file != False:
             self.video_file = video_file
         
+        self.audio_type = 'wav'
+        
         if audio_name == '':
             self.audio_file = self.video_file.audio
         else:
             self.upload_audio(audio_name)
+            self.audio_type = audio_name.split('.')[-1]
          
     def concatenate(self,other,name = "concat_video",save=True):
         
@@ -49,19 +53,20 @@ class video:
         if new_name != '':
            self.name =  new_name
     
-        audio_name = self.path + self.name[:len(self.name)-4] + '.wav'
+        audio_name = self.path + self.name[:len(self.name)-4] + '.' + self.audio_type
         
-        self.audio_file.export(audio_name, format="wav")
+        self.audio_file.export(audio_name, format= self.audio_type)
     
     def upload_audio(self,audio_file_name):
-        input_audio = pd.AudioSegment.from_wav(self.path + audio_file_name)
+        if self.audio_type == 'wav':
+            input_audio = pd.AudioSegment.from_wav(self.path + audio_file_name)
         self.change_audio(input_audio)         
     
     def change_audio(self,new_audio_file,in_video = False):
         self.audio_file = new_audio_file    
         
         if in_video == True:
-            temp_name = self.path+"temp_audio.wav"
+            temp_name = self.path+"temp_audio." + self.audio_type
         
             self.save_audio(temp_name)
             new_audioclip = me.AudioFileClip(temp_name)
@@ -72,13 +77,14 @@ class video:
     
         
 class edit_tools:
-    def __init__(self,video1,video2,video3=False,path='',parameters=(0,0,0,0,0)):
+    def __init__(self,video1='',video2='',video3=False,path='',parameters=(0,0,0,0,0)):
         self.path = path
         self.higher_sound = []
         self.video1 = video1
         self.video2 = video2
         self.video3 = video3
-        self.video3.remove_audio()
+        if video3 !=False:
+            self.video3.remove_audio()
         if parameters[0] == 0:
             self.cutoff = float('-inf')
         else:
@@ -245,6 +251,14 @@ class edit_tools:
         
         return final_video_name,final_video_obj,max_fps
         
-        #final_video_obj.save_video(final_video_name,max_fps)        
-            
+    def normalize_audio(self, inputSound,targetDBFS):
+        targetSound = pd.AudioSegment.from_wav(inputSound)
+        changeInDBFS = targetDBFS - targetSound.dBFS
+        targetSound.apply_gain(changeInDBFS)
+        return targetSound
+    
+    def get_max_audio(self,inputSound,sliceSize):
+        size = int(sliceSize * self.convert_time)
+        audio = pd.AudioSegment.from_wav(inputSound)
+        return max(chunk.dBFS for chunk in make_chunks(audio, size))
     

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTreeView" name="treeView">
     <property name="geometry">
@@ -33,6 +36,13 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>Directory</string>
     </property>
@@ -45,6 +55,11 @@
       <width>171</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Video 1</string>
@@ -59,6 +74,11 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Audio 1</string>
     </property>
@@ -71,6 +91,11 @@
       <width>171</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Video 2</string>
@@ -85,6 +110,11 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Audio 2</string>
     </property>
@@ -98,6 +128,11 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Video 3</string>
     </property>
@@ -105,8 +140,8 @@
    <widget class="QSlider" name="sliderCutoff">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>360</y>
+      <x>200</x>
+      <y>380</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -118,8 +153,8 @@
    <widget class="QSlider" name="sliderResolution">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>400</y>
+      <x>200</x>
+      <y>440</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -131,8 +166,8 @@
    <widget class="QSlider" name="sliderReduction">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>440</y>
+      <x>200</x>
+      <y>510</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -144,11 +179,18 @@
    <widget class="QLabel" name="labelCutoff">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>360</y>
+      <x>150</x>
+      <y>350</y>
       <width>101</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Silence Cutoff</string>
@@ -157,11 +199,18 @@
    <widget class="QLabel" name="labelResolution">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>400</y>
+      <x>150</x>
+      <y>410</y>
       <width>71</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Resolution</string>
@@ -170,11 +219,18 @@
    <widget class="QLabel" name="labelReduction">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>440</y>
+      <x>150</x>
+      <y>480</y>
       <width>121</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Volume Reduction</string>
@@ -183,8 +239,8 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>560</y>
+      <x>360</x>
+      <y>640</y>
       <width>331</width>
       <height>23</height>
      </rect>
@@ -196,8 +252,8 @@
    <widget class="QLabel" name="labelCutoffUnits">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>360</y>
+      <x>390</x>
+      <y>380</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -209,8 +265,8 @@
    <widget class="QLabel" name="labelResolutionUnits">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>400</y>
+      <x>390</x>
+      <y>440</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -222,8 +278,8 @@
    <widget class="QLabel" name="labelReductionUnits">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>440</y>
+      <x>390</x>
+      <y>510</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -235,8 +291,8 @@
    <widget class="QPushButton" name="buttonPlay">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>620</y>
+      <x>490</x>
+      <y>700</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -248,8 +304,8 @@
    <widget class="QLabel" name="labelCutoffValue">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>360</y>
+      <x>150</x>
+      <y>380</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -261,8 +317,8 @@
    <widget class="QLabel" name="labelResValue">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>400</y>
+      <x>150</x>
+      <y>440</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -274,8 +330,8 @@
    <widget class="QLabel" name="labelRedValue">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>440</y>
+      <x>150</x>
+      <y>510</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -287,8 +343,8 @@
    <widget class="QPushButton" name="buttonConvert">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>500</y>
+      <x>490</x>
+      <y>580</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -300,8 +356,8 @@
    <widget class="QSlider" name="sliderChangeTime">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>400</y>
+      <x>660</x>
+      <y>440</y>
       <width>160</width>
       <height>22</height>
      </rect>
@@ -313,11 +369,18 @@
    <widget class="QLabel" name="labelCutoffVideo3">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>360</y>
+      <x>610</x>
+      <y>350</y>
       <width>101</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Video 3 cutoff</string>
@@ -326,8 +389,8 @@
    <widget class="QLabel" name="labelCutoffVideo3Value">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>360</y>
+      <x>610</x>
+      <y>380</y>
       <width>41</width>
       <height>16</height>
      </rect>
@@ -339,8 +402,8 @@
    <widget class="QLabel" name="labelCutoffVideo3Units">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>360</y>
+      <x>850</x>
+      <y>380</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -352,8 +415,8 @@
    <widget class="QLabel" name="labelChangeTimeValue">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>400</y>
+      <x>610</x>
+      <y>440</y>
       <width>41</width>
       <height>16</height>
      </rect>
@@ -365,11 +428,18 @@
    <widget class="QLabel" name="labelChangeTime">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>400</y>
+      <x>610</x>
+      <y>410</y>
       <width>121</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Change Time</string>
@@ -378,8 +448,8 @@
    <widget class="QLabel" name="labelChangeTimeUnits">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>400</y>
+      <x>850</x>
+      <y>440</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -391,8 +461,8 @@
    <widget class="QSlider" name="sliderCutoffVideo3">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>360</y>
+      <x>660</x>
+      <y>380</y>
       <width>160</width>
       <height>22</height>
      </rect>

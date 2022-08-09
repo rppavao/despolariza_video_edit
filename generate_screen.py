@@ -9,3 +9,4 @@ import os
 
 os.system("pyuic5 main_screen.ui -o screen.py")
 
+os.system("pyuic5 normalize_screen.ui -o normalizescreen.py")
