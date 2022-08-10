@@ -12,7 +12,28 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from screen import Ui_MainWindow
 from normalizescreen import Ui_NormalizeWindow
+from synchscreen import Ui_SynchWindow
 from PyQt5.QtCore import QUrl
+
+
+class Messages:  
+    def __init__(self,messages=False):
+        
+        if messages == False:
+            self.messages = ("Please select 3 videos and 2 audios!", \
+                      "Change time must be smaller than Resolution!",\
+                      "Video and audio files should be .mp4 and .wav, respectively!",\
+                      "Please select 2 audios!")
+        else:
+            self.messages = messages
+                
+    def triggerError(self,number):
+        msg = QMessageBox()
+        msg.setWindowTitle("Error")
+        print(number)
+        msg.setText(self.messages[number])
+        return msg.exec_()
+        
 
 class videoEditGui(qtw.QMainWindow):
     
@@ -22,12 +43,11 @@ class videoEditGui(qtw.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        self.set_directory_tree()
+        self.setDirectoryTree()
         self.video_list = []
         self.audio_list = []
-        self.msg = QMessageBox()
         self.slider_values = [0,0,0,0,0]
-        self.set_slider_default_value()
+        self.setSliderDefaultValue()
         self.ui.progressBar.hide()
         # self.ui.buttonSave.hide()
         self.ui.buttonPlay.hide()
@@ -35,28 +55,28 @@ class videoEditGui(qtw.QMainWindow):
         self.final_video_instance = False
         self.max_fps = 0
         
-        self.ui.treeView.doubleClicked.connect(self.treeView_doubleClicked)
-        self.ui.sliderCutoff.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=0))
-        self.ui.sliderResolution.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=1))
-        self.ui.sliderReduction.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=2))
-        self.ui.sliderCutoffVideo3.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=3))
-        self.ui.sliderChangeTime.valueChanged[int].connect(lambda x: self.get_slider_value(x,slider=4))
+        self.ui.treeView.doubleClicked.connect(self.treeViewDoubleClicked)
+        self.ui.sliderCutoff.valueChanged[int].connect(lambda x: self.getSliderValue(x,slider=0))
+        self.ui.sliderResolution.valueChanged[int].connect(lambda x: self.getSliderValue(x,slider=1))
+        self.ui.sliderReduction.valueChanged[int].connect(lambda x: self.getSliderValue(x,slider=2))
+        self.ui.sliderCutoffVideo3.valueChanged[int].connect(lambda x: self.getSliderValue(x,slider=3))
+        self.ui.sliderChangeTime.valueChanged[int].connect(lambda x: self.getSliderValue(x,slider=4))
 
-        self.ui.buttonConvert.clicked.connect(self.start_video_conversion)  
-        self.ui.buttonPlay.clicked.connect(self.play_final_video)
+        self.ui.buttonConvert.clicked.connect(self.startVideoConversion)  
+        self.ui.buttonPlay.clicked.connect(self.playFinalVideo)
         
-        self.ui.actionSave.triggered.connect(self.save_video)
-        self.ui.actionNormalize_Audio.triggered.connect(self.normalize_audio)
+        self.ui.actionSave.triggered.connect(self.saveVideo)
+        self.ui.actionNormalize_Audio.triggered.connect(self.normalizeAudio)
 
         
-    def set_directory_tree(self):
+    def setDirectoryTree(self):
         model = qtw.QFileSystemModel()
         model.setRootPath(qtc.QDir.currentPath())
         
         treeView = self.ui.treeView
         treeView.setModel(model)
 
-    def treeView_doubleClicked(self,index):
+    def treeViewDoubleClicked(self,index):
         file_name = index.model().filePath(index)
         
         if file_name[-3:] == 'mp4':
@@ -71,7 +91,7 @@ class videoEditGui(qtw.QMainWindow):
             else:
                 self.audio_list = [file_name]
         else:
-            self.trigger_error(3)
+            self.triggerError(3)
                 
         videoLabel = {0:self.ui.labelVideo1, 1:self.ui.labelVideo2, 2:self.ui.labelVideo3}
         audioLabel = {0:self.ui.labelAudio1, 1:self.ui.labelAudio2}
@@ -92,7 +112,7 @@ class videoEditGui(qtw.QMainWindow):
             except KeyError:
                 continue
             
-    def get_slider_value(self,value,slider):
+    def getSliderValue(self,value,slider):
         
         sliderLabelList = (self.ui.labelCutoffValue, self.ui.labelResValue, self.ui.labelRedValue, \
                            self.ui.labelCutoffVideo3Value, self.ui.labelChangeTimeValue )
@@ -107,7 +127,7 @@ class videoEditGui(qtw.QMainWindow):
         
         sliderLabelList[slider].setText(value_str)
         
-    def set_slider_default_value(self):
+    def setSliderDefaultValue(self):
         self.ui.labelCutoffValue.setText("-30")
         self.ui.labelResValue.setText("0.5")
         self.ui.labelRedValue.setText("0")
@@ -134,10 +154,10 @@ class videoEditGui(qtw.QMainWindow):
         self.ui.sliderChangeTime.setMinimum(1)
         self.ui.sliderChangeTime.setValue(5)        
         
-    def start_video_conversion(self):
+    def startVideoConversion(self):
         if len(self.video_list) < 3 or \
             len(self.audio_list) < 2:
-            self.trigger_error(0)
+            self.triggerError(0)
             return
 
         self.ui.progressBar.show()
@@ -157,7 +177,7 @@ class videoEditGui(qtw.QMainWindow):
         
         # if changeTime > resolution:
         #     print(changeTime,resolution)
-        #     self.trigger_error(1)
+        #     self.triggerError(1)
         #     return
         
         parameters = (cutoff,resolution,volumeReduction,cutoffVideo3,changeTime)
@@ -165,22 +185,22 @@ class videoEditGui(qtw.QMainWindow):
         edit_instance = edit_tools(video1,video2,video3=video3,parameters=parameters)
             
         self.final_video_name,self.final_video_instance, \
-            self.max_fps = edit_instance.concat_video_by_sound(progress = self.get_progress) 
+            self.max_fps = edit_instance.concat_video_by_sound(progress = self.getProgress) 
             
         self.final_video_instance.change_audio(self.final_video_instance.audio_file,True)
-        self.final_video_instance.save_video("temp_video.mp4",self.max_fps)
+        self.final_video_instance.saveVideo("temp_video.mp4",self.max_fps)
         
-        self.get_progress(100)
+        self.getProgress(100)
         
         self.ui.buttonPlay.show()
         
-    def get_progress(self, value):
+    def getProgress(self, value):
         self.ui.progressBar.setValue(value)
         
-    def save_video(self):
-        self.final_video_instance.save_video(self.final_video_name,self.max_fps)
+    def saveVideo(self):
+        self.final_video_instance.saveVideo(self.final_video_name,self.max_fps)
         
-    def play_final_video(self):
+    def playFinalVideo(self):
         
         video = QVideoWidget()
         video.resize(300, 300)
@@ -196,25 +216,34 @@ class videoEditGui(qtw.QMainWindow):
         print("Here")
         return 
         
-    def trigger_error(self,error):
+    def triggerError(self,number):   
+        error = Messages()
+        error.triggerError(number)
         
-        errors = ("Please select 3 videos and 2 audios!", \
-                  "Change time must be smaller than Resolution!",\
-                  "Video and audio files should be .mp4 and .wav, respectively!",\
-                  "Please select 2 audios!")
-        
-        self.msg.setWindowTitle("Error")
-        self.msg.setText(errors[error])
-        msg = self.msg.exec_()
-        
-    def normalize_audio(self):
+    def normalizeAudio(self):
         if len(self.audio_list) < 2:
-            self.trigger_error(3)
+            self.triggerError(3)
             return      
         self.normalizeWindow = normalizeGui(self.audio_list[0],self.audio_list[1] \
                                            ,self.ui.sliderResolution.value() / 10)
         self.normalizeWindow.showWindow()
-             
+
+    def synchAudio(self):
+        if len(self.video_list) < 3 or \
+            len(self.audio_list) < 2:
+            self.triggerError(0)
+            return    
+        
+        video1 = video(self.video_list[0])
+        video1.upload_audio(self.audio_list[0])
+        video2 = video(self.video_list[1])
+        video2.upload_audio(self.audio_list[1])
+        video3 = video(self.video_list[2])
+        
+        media = [video1, video1.audio_file(), video2, video2.audio_file(), video3]
+        
+        self.synchWindow = synchGui(media)
+        self.synchWindow.showWindow()             
         
 class normalizeGui(qtw.QMainWindow):
     
@@ -238,8 +267,8 @@ class normalizeGui(qtw.QMainWindow):
         
     def normalizeAudio(self,audio1,audio2):
         tools = edit_tools()
-        tools.normalize_audio(audio1,self.targetDBFS)
-        tools.normalize_audio(audio2,self.targetDBFS)
+        tools.normalizeAudio(audio1,self.targetDBFS)
+        tools.normalizeAudio(audio2,self.targetDBFS)
     
     def setSliderValues(self):
         self.ui.labelNormalizeValue.setText(str(self.targetDBFS))      
@@ -254,13 +283,23 @@ class normalizeGui(qtw.QMainWindow):
         
         
     def getMaxAudioValue(self,audio1,audio2,sliceSize):
-        tools = edit_tools()
-        
+        tools = edit_tools()  
         max1 = tools.get_max_audio(audio1,sliceSize)
         max2 = tools.get_max_audio(audio2,sliceSize)
-        
         return max(max1,max2)
         
+
+class synchGui(qtw.QMainWindow):
+    
+    def __init__(self,mediaFiles,*args,**kwargs):
+        super().__init__(*args,**kwargs)  
+
+        self.window =  qtw.QMainWindow()
+        self.ui = Ui_SynchWindow()
+        self.ui.setupUi(self.window)           
+        
+    def showWindow(self):
+        self.window.show()
 
 if __name__ == "__main__" :
     app = qtw.QApplication([])

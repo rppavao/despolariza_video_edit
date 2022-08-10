@@ -10,3 +10,5 @@ import os
 os.system("pyuic5 main_screen.ui -o screen.py")
 
 os.system("pyuic5 normalize_screen.ui -o normalizescreen.py")
+
+os.system("pyuic5 synch_screen.ui -o synchscreen.py")
