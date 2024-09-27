@@ -1,0 +1,7 @@
+This is a podcast editing tool that takes as input 2 microphones and 3 cameras. 
+It automatically creates a video that shows camera 1 if there's sound in microphone 1, camera 2 if there's sound in microphone 2 and camera 3 if volume is similar in both microphones. 
+This project was completed in partnership with portuguese podcast Despolariza, but it was never used in production.
+
+To run install python.
+To install necessary files run setup.py
+To execute program, run main.py
